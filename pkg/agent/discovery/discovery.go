@@ -137,7 +137,7 @@ func (d *Discoverer) Discover() {
 		lastHeartbeatTime := metav1.Now()
 		newStatus.NodeStorageInfo.State.LastHeartbeatTime = &lastHeartbeatTime
 		nlsCopy.Status.NodeStorageInfo = newStatus.NodeStorageInfo
-		nlsCopy.Status.FilteredStorageInfo.VolumeGroups = FilterVGInfo(nlsCopy)
+		nlsCopy.Status.FilteredStorageInfo.VolumePools = FilterVGInfo(nlsCopy)
 		nlsCopy.Status.FilteredStorageInfo.MountPoints = FilterMPInfo(nlsCopy)
 		nlsCopy.Status.FilteredStorageInfo.Devices = FilterDeviceInfo(nlsCopy)
 		nlsCopy.Status.FilteredStorageInfo.UpdateStatus.Status = localv1alpha1.UpdateStatusAccepted
@@ -324,7 +324,7 @@ func getReservedVGInfo(reservedAnno string) (infos map[string]ReservedVGInfo, er
 
 func FilterVGInfo(nls *localv1alpha1.NodeLocalStorage) []string {
 	var vgSlice []string
-	for _, vg := range nls.Status.NodeStorageInfo.VolumeGroups {
+	for _, vg := range nls.Status.NodeStorageInfo.VolumePools {
 		vgSlice = append(vgSlice, vg.Name)
 	}
 

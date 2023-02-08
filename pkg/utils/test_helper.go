@@ -94,11 +94,11 @@ func CreateTestNodeLocalStorage1() *localv1alpha1.NodeLocalStorage {
 		},
 		Status: localv1alpha1.NodeLocalStorageStatus{
 			NodeStorageInfo: localv1alpha1.NodeStorageInfo{
-				VolumeGroups: []localv1alpha1.VolumeGroup{
+				VolumePools: []localv1alpha1.VolumePool{
 					{
 						Name:            VGSSD,
 						PhysicalVolumes: []string{},
-						LogicalVolumes:  []localv1alpha1.LogicalVolume{},
+						LocalVolumes:    []localv1alpha1.LocalVolume{},
 						Total:           100 * LocalGi,
 						Available:       100 * LocalGi,
 						Allocatable:     100 * LocalGi,
@@ -106,7 +106,7 @@ func CreateTestNodeLocalStorage1() *localv1alpha1.NodeLocalStorage {
 					{
 						Name:            VGHDD,
 						PhysicalVolumes: []string{},
-						LogicalVolumes:  []localv1alpha1.LogicalVolume{},
+						LocalVolumes:    []localv1alpha1.LocalVolume{},
 						Total:           500 * LocalGi,
 						Available:       500 * LocalGi,
 						Allocatable:     500 * LocalGi,
@@ -145,8 +145,8 @@ func CreateTestNodeLocalStorage1() *localv1alpha1.NodeLocalStorage {
 				},
 			},
 			FilteredStorageInfo: localv1alpha1.FilteredStorageInfo{
-				VolumeGroups: []string{VGHDD, VGSSD},
-				MountPoints:  []string{"/mnt/open-local/testmnt-node1-a"},
+				VolumePools: []string{VGHDD, VGSSD},
+				MountPoints: []string{"/mnt/open-local/testmnt-node1-a"},
 			},
 		},
 	}
@@ -172,11 +172,11 @@ func CreateTestNodeLocalStorage2() *localv1alpha1.NodeLocalStorage {
 		},
 		Status: localv1alpha1.NodeLocalStorageStatus{
 			NodeStorageInfo: localv1alpha1.NodeStorageInfo{
-				VolumeGroups: []localv1alpha1.VolumeGroup{
+				VolumePools: []localv1alpha1.VolumePool{
 					{
 						Name:            VGSSD,
 						PhysicalVolumes: []string{},
-						LogicalVolumes:  []localv1alpha1.LogicalVolume{},
+						LocalVolumes:    []localv1alpha1.LocalVolume{},
 						Total:           200 * LocalGi,
 						Available:       200 * LocalGi,
 						Allocatable:     200 * LocalGi,
@@ -184,7 +184,7 @@ func CreateTestNodeLocalStorage2() *localv1alpha1.NodeLocalStorage {
 					{
 						Name:            VGHDD,
 						PhysicalVolumes: []string{},
-						LogicalVolumes:  []localv1alpha1.LogicalVolume{},
+						LocalVolumes:    []localv1alpha1.LocalVolume{},
 						Total:           750 * LocalGi,
 						Available:       750 * LocalGi,
 						Allocatable:     750 * LocalGi,
@@ -229,7 +229,7 @@ func CreateTestNodeLocalStorage2() *localv1alpha1.NodeLocalStorage {
 				},
 			},
 			FilteredStorageInfo: localv1alpha1.FilteredStorageInfo{
-				VolumeGroups: []string{VGHDD, VGSSD},
+				VolumePools: []string{VGHDD, VGSSD},
 			},
 		},
 	}
@@ -257,11 +257,11 @@ func CreateTestNodeLocalStorage3() *localv1alpha1.NodeLocalStorage {
 		},
 		Status: localv1alpha1.NodeLocalStorageStatus{
 			NodeStorageInfo: localv1alpha1.NodeStorageInfo{
-				VolumeGroups: []localv1alpha1.VolumeGroup{
+				VolumePools: []localv1alpha1.VolumePool{
 					{
 						Name:            VGSSD,
 						PhysicalVolumes: []string{},
-						LogicalVolumes:  []localv1alpha1.LogicalVolume{},
+						LocalVolumes:    []localv1alpha1.LocalVolume{},
 						Total:           300 * LocalGi,
 						Available:       300 * LocalGi,
 						Allocatable:     300 * LocalGi,
@@ -300,9 +300,9 @@ func CreateTestNodeLocalStorage3() *localv1alpha1.NodeLocalStorage {
 				},
 			},
 			FilteredStorageInfo: localv1alpha1.FilteredStorageInfo{
-				VolumeGroups: []string{VGHDD, VGSSD},
-				MountPoints:  []string{"/mnt/open-local/testmnt-node1-a"},
-				Devices:      []string{"/dev/sdc"},
+				VolumePools: []string{VGHDD, VGSSD},
+				MountPoints: []string{"/mnt/open-local/testmnt-node1-a"},
+				Devices:     []string{"/dev/sdc"},
 			},
 		},
 	}

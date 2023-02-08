@@ -46,7 +46,7 @@ func (d *Discoverer) discoverLvstore(newStatus *localv1alpha1.NodeLocalStorageSt
 	}
 
 	for _, lvs := range *lvss {
-		var vgCrd localv1alpha1.VolumeGroup
+		var vgCrd localv1alpha1.VolumePool
 		vgCrd.Condition = localv1alpha1.StorageReady
 		vgCrd.Name = lvs.Name
 
@@ -64,9 +64,9 @@ func (d *Discoverer) discoverLvstore(newStatus *localv1alpha1.NodeLocalStorageSt
 		}
 
 		vgCrd.Allocatable = vgCrd.Available
-		//vgCrd.LogicalVolumes seems unused, skip it.
+		//vgCrd.LocalVolumes seems unused, skip it.
 
-		newStatus.NodeStorageInfo.VolumeGroups = append(newStatus.NodeStorageInfo.VolumeGroups, vgCrd)
+		newStatus.NodeStorageInfo.VolumePools = append(newStatus.NodeStorageInfo.VolumePools, vgCrd)
 	}
 
 	return nil
@@ -79,7 +79,7 @@ func (d *Discoverer) discoverLvmVGs(newStatus *localv1alpha1.NodeLocalStorageSta
 	}
 
 	for _, vgname := range vgnames {
-		var vgCrd localv1alpha1.VolumeGroup
+		var vgCrd localv1alpha1.VolumePool
 		vgCrd.Condition = localv1alpha1.StorageReady
 		// Name
 		vg, err := lvm.LookupVolumeGroup(vgname)
@@ -102,7 +102,7 @@ func (d *Discoverer) discoverLvmVGs(newStatus *localv1alpha1.NodeLocalStorageSta
 			vgCrd.Condition = localv1alpha1.StorageFull
 		}
 
-		// LogicalVolumes
+		// LocalVolumes
 		logicalVolumeNames, err := vg.ListLogicalVolumeNames()
 		if err != nil {
 			log.Errorf("List volume group %s error: %s", vgname, err.Error())
@@ -110,9 +110,9 @@ func (d *Discoverer) discoverLvmVGs(newStatus *localv1alpha1.NodeLocalStorageSta
 		}
 		vgCrd.Allocatable = vgCrd.Total
 		for _, lvname := range logicalVolumeNames {
-			var lv localv1alpha1.LogicalVolume
+			var lv localv1alpha1.LocalVolume
 			lv.Name = lvname
-			lv.VGName = vgname
+			lv.VolumePoolName = vgname
 			tmplv, err := vg.LookupLogicalVolume(lvname)
 			if err != nil {
 				log.Errorf("List logical volume %s error: %s", lvname, err.Error())
@@ -123,7 +123,7 @@ func (d *Discoverer) discoverLvmVGs(newStatus *localv1alpha1.NodeLocalStorageSta
 				vgCrd.Allocatable -= lv.Total
 			}
 			lv.Condition = localv1alpha1.StorageReady
-			vgCrd.LogicalVolumes = append(vgCrd.LogicalVolumes, lv)
+			vgCrd.LocalVolumes = append(vgCrd.LocalVolumes, lv)
 		}
 
 		// check if vgCrd.Allocatable is correct
@@ -148,7 +148,7 @@ func (d *Discoverer) discoverLvmVGs(newStatus *localv1alpha1.NodeLocalStorageSta
 		// }
 		vgCrd.Condition = localv1alpha1.StorageReady
 
-		newStatus.NodeStorageInfo.VolumeGroups = append(newStatus.NodeStorageInfo.VolumeGroups, vgCrd)
+		newStatus.NodeStorageInfo.VolumePools = append(newStatus.NodeStorageInfo.VolumePools, vgCrd)
 	}
 
 	return nil

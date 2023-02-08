@@ -50,126 +50,46 @@ spec:
           spec:
             description: NodeLocalStorageSpec defines the desired state of NodeLocalStorage
             properties:
-              listConfig:
-                properties:
-                  devices:
-                    description: Devices defines the user specified Devices to be scheduled, only raw device specified here can be picked by scheduler
-                    properties:
-                      exclude:
-                        items:
-                          type: string
-                        maxItems: 50
-                        type: array
-                      include:
-                        items:
-                          type: string
-                        maxItems: 50
-                        type: array
-                    type: object
-                  mountPoints:
-                    description: BlacklistMountPoints defines the user specified mount points which are not allowed for scheduling
-                    properties:
-                      exclude:
-                        items:
-                          type: string
-                        maxItems: 50
-                        type: array
-                      include:
-                        items:
-                          type: string
-                        maxItems: 50
-                        type: array
-                    type: object
-                  vgs:
-                    description: VGs defines the user specified VGs to be scheduled only VGs specified here can be picked by scheduler
-                    properties:
-                      exclude:
-                        items:
-                          type: string
-                        maxItems: 50
-                        type: array
-                      include:
-                        items:
-                          type: string
-                        maxItems: 50
-                        type: array
-                    type: object
-                type: object
+              localVolumeConfigs:
+                items:
+                  properties:
+                    localVolumeResourceToBeInited:
+                      items:
+                        properties:
+                          parameters:
+                            items:
+                              properties:
+                                key:
+                                  type: string
+                                values:
+                                  items:
+                                    type: string
+                                  type: array
+                              type: object
+                            type: array
+                        type: object
+                      type: array
+                    parameters:
+                      items:
+                        properties:
+                          key:
+                            type: string
+                          values:
+                            items:
+                              type: string
+                            type: array
+                        type: object
+                      type: array
+                    volumeType:
+                      description: LVM, SPDK, or any others
+                      type: string
+                  type: object
+                type: array
               nodeName:
                 description: NodeName is the kube node name
                 maxLength: 128
                 minLength: 1
                 type: string
-              resourceToBeInited:
-                properties:
-                  mountpoints:
-                    description: MountPoints defines the user specified mount points, which will be initialized by Filtered Agent
-                    items:
-                      properties:
-                        device:
-                          description: Device is the device underlying the mount point
-                          maxLength: 128
-                          minLength: 1
-                          pattern: ^(/[^/ ]*)+/?$
-                          type: string
-                        fsType:
-                          description: FsType is filesystem type
-                          maxLength: 128
-                          minLength: 1
-                          type: string
-                        options:
-                          description: Options is a list of mount options
-                          items:
-                            type: string
-                          type: array
-                        path:
-                          description: Path is the path of mount point
-                          maxLength: 128
-                          minLength: 1
-                          pattern: ^(/[^/ ]*)+/?$
-                          type: string
-                      required:
-                      - device
-                      - path
-                      type: object
-                    maxItems: 50
-                    type: array
-                  vgs:
-                    description: VGs defines the user specified VGs, which will be initialized by Filtered Agent
-                    items:
-                      properties:
-                        devices:
-                          description: Device can be whole disk or disk partition which will be initialized as Physical Volume
-                          items:
-                            type: string
-                          maxItems: 50
-                          type: array
-                        name:
-                          description: Name is the name of volume group
-                          maxLength: 128
-                          minLength: 1
-                          type: string
-                      required:
-                      - devices
-                      - name
-                      type: object
-                    maxItems: 50
-                    type: array
-                type: object
-              spdkConfig:
-                description: SpdkConfig defines SPDK configuration
-                properties:
-                  deviceType:
-                    description: DeviceType is the type of SPDK block devices
-                    maxLength: 8
-                    minLength: 0
-                    type: string
-                  rpcSocket:
-                    description: RpcSocket is the unix domain socket for SPDK RPC
-                    maxLength: 128
-                    minLength: 0
-                    type: string
-                type: object
             type: object
           status:
             description: NodeLocalStorageStatus defines the observed state of NodeLocalStorage
@@ -198,7 +118,7 @@ spec:
                         type: string
                     type: object
                   volumeGroups:
-                    description: VolumeGroups is LVM vgs picked by Filtered according to WhitelistVGs/BlacklistVGs
+                    description: 'VolumePools is LVM vgs picked by Filtered according to WhitelistVGs/BlacklistVGs todo: change to volumePool'
                     items:
                       type: string
                     type: array
@@ -297,65 +217,62 @@ spec:
                         type: string
                     type: object
                   volumeGroups:
-                    description: VolumeGroups is LVM vgs
+                    description: 'VolumePools is LVM vgs todo: local volume pool'
                     items:
-                      description: VolumeGroup is an alias for LVM VG
+                      description: VolumePool
                       properties:
                         allocatable:
                           description: Allocatable is the free size for Filtered
                           format: int64
                           type: integer
                         available:
-                          description: Available is the free size for VG
+                          description: Available is the free size for volume pool
                           format: int64
                           type: integer
                         condition:
                           description: Condition is the condition for Volume group
                           type: string
-                        logicalVolumes:
-                          description: LogicalVolumes "Virtual/logical partition" that resides in a VG
+                        localVolumes:
+                          description: LocalVolumes
                           items:
-                            description: LogicalVolume is an alias for LVM LV
+                            description: LocalVolume
                             properties:
                               condition:
-                                description: Condition is the condition for LogicalVolume
+                                description: Condition is the condition for LocalVolume
                                 type: string
                               name:
-                                description: Name is the LV name
+                                description: Name is the local volume name
                                 type: string
                               readOnly:
-                                description: ReadOnly indicates whether the LV is read-only
+                                description: ReadOnly indicates whether the local volume is read-only
                                 type: boolean
                               total:
-                                description: Size is the LV size
+                                description: Size is the local volume size
                                 format: int64
                                 type: integer
-                              vgname:
-                                description: VGName is the VG name of this LV
+                              volumePoolName:
+                                description: VolumePoolName
                                 type: string
                             required:
                             - name
                             - total
-                            - vgname
+                            - volumePoolName
                             type: object
                           type: array
                         name:
-                          description: Name is the VG name
+                          description: Name is the volumePool name
                           type: string
-                        physicalVolumes:
-                          description: PhysicalVolumes are Unix block device nodes,
-                          items:
-                            type: string
-                          type: array
                         total:
-                          description: Total is the VG size
+                          description: Total is the volume pool size
                           format: int64
                           type: integer
+                        volumeType:
+                          description: LVM,SPDK
+                          type: string
                       required:
                       - allocatable
                       - available
                       - name
-                      - physicalVolumes
                       - total
                       type: object
                     type: array

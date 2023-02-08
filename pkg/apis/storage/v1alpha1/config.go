@@ -46,21 +46,48 @@ type NodeLocalStorageInitConfigList struct {
 
 // GlobalConfig is configuration for agent to create default NodeLocalStorage
 type GlobalConfig struct {
-	SpdkConfig         SpdkConfig         `json:"spdkConfig,omitempty"`
-	ListConfig         ListConfig         `json:"listConfig,omitempty"`
-	ResourceToBeInited ResourceToBeInited `json:"resourceToBeInited,omitempty"`
+	MountPointConfig   MountPointConfig    `json:"mountPointConfig,omitempty"`
+	DeviceConfig       DeviceConfig        `json:"deviceConfig,omitempty"`
+	LocalVolumeConfigs []LocalVolumeConfig `json:"localVolumeConfigs,omitempty"`
 }
 
 // NodeConfig is configuration for agent to create NodeLocalStorage of specific node
 type NodeConfig struct {
 	Selector           *metav1.LabelSelector `json:"selector,omitempty"`
-	SpdkConfig         SpdkConfig            `json:"spdkConfig,omitempty"`
-	ListConfig         ListConfig            `json:"listConfig,omitempty"`
-	ResourceToBeInited ResourceToBeInited    `json:"resourceToBeInited,omitempty"`
+	MountPointConfig   MountPointConfig      `json:"mountPointConfig,omitempty"`
+	DeviceConfig       DeviceConfig          `json:"deviceConfig,omitempty"`
+	LocalVolumeConfigs []LocalVolumeConfig   `json:"localVolumeConfigs,omitempty"`
 }
 
 // NodeLocalStorageInitConfigSpec is spec of NodeLocalStorageInitConfig
 type NodeLocalStorageInitConfigSpec struct {
 	GlobalConfig GlobalConfig `json:"globalConfig,omitempty"`
 	NodesConfig  []NodeConfig `json:"nodesConfig,omitempty"`
+}
+
+type LocalVolumeConfig struct {
+	//LVM, SPDK, or any others
+	VolumeType                    string                          `json:"volumeType,omitempty"`
+	Parameters                    []LocalVolumeParameter          `json:"parameters,omitempty"`
+	LocalVolumeResourceToBeInited []LocalVolumeResourceToBeInited `json:"localVolumeResourceToBeInited,omitempty"`
+}
+
+type LocalVolumeParameter struct {
+	Key    string   `json:"key,omitempty"`
+	Values []string `json:"values,omitempty"`
+}
+
+type LocalVolumeResourceToBeInited struct {
+	Parameters []LocalVolumeParameter `json:"parameters,omitempty"`
+}
+
+type MountPointConfig struct {
+	Include     []string               `json:"include,omitempty"`
+	Exclude     []string               `json:"exclude,omitempty"`
+	MountPoints []MountPointToBeInited `json:"mountpoints,omitempty"`
+}
+
+type DeviceConfig struct {
+	Include []string `json:"include,omitempty"`
+	Exclude []string `json:"exclude,omitempty"`
 }

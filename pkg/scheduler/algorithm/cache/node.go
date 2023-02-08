@@ -53,12 +53,12 @@ func NewNodeCacheFromStorage(nodeLocal *nodelocalstorage.NodeLocalStorage) *Node
 	}
 
 	// VGs
-	vgInfoMap := make(map[string]nodelocalstorage.VolumeGroup, len(nodeLocal.Status.FilteredStorageInfo.VolumeGroups))
-	for _, vg := range nodeLocal.Status.NodeStorageInfo.VolumeGroups {
+	vgInfoMap := make(map[string]nodelocalstorage.VolumePool, len(nodeLocal.Status.FilteredStorageInfo.VolumePools))
+	for _, vg := range nodeLocal.Status.NodeStorageInfo.VolumePools {
 		vgInfoMap[vg.Name] = vg
 	}
 	// add vgs
-	for _, vgName := range nodeLocal.Status.FilteredStorageInfo.VolumeGroups {
+	for _, vgName := range nodeLocal.Status.FilteredStorageInfo.VolumePools {
 		log.V(6).Infof("adding new volume group %q(total:%d,allocatable:%d,used:%d) on node cache %s",
 			vgName, vgInfoMap[vgName].Total, vgInfoMap[vgName].Allocatable, vgInfoMap[vgName].Total-vgInfoMap[vgName].Available, newNodeCache.NodeName)
 		log.V(6).Infof("vg raw info:%#v", vgInfoMap[vgName])
@@ -130,8 +130,8 @@ func (nc *NodeCache) UpdateNodeInfo(nodeLocal *nodelocalstorage.NodeLocalStorage
 	cacheNode := nc
 	// VG
 	// get vg from CR
-	volumeGroups := nodeLocal.Status.NodeStorageInfo.VolumeGroups
-	vgMapInfo := make(map[string]nodelocalstorage.VolumeGroup)
+	volumeGroups := nodeLocal.Status.NodeStorageInfo.VolumePools
+	vgMapInfo := make(map[string]nodelocalstorage.VolumePool)
 	for _, vg := range volumeGroups {
 		vgMapInfo[vg.Name] = vg
 	}
@@ -141,7 +141,7 @@ func (nc *NodeCache) UpdateNodeInfo(nodeLocal *nodelocalstorage.NodeLocalStorage
 		vgCache = append(vgCache, vg.Name)
 	}
 	// update VGs
-	addedVGs, unchangedVGs, removedVGs := utils.GetAddedAndRemovedItems(nodeLocal.Status.FilteredStorageInfo.VolumeGroups, vgCache)
+	addedVGs, unchangedVGs, removedVGs := utils.GetAddedAndRemovedItems(nodeLocal.Status.FilteredStorageInfo.VolumePools, vgCache)
 	for _, vg := range addedVGs {
 		log.V(6).Infof("adding new volume group %q(total:%d,allocatable:%d,used:%d) on node cache %s",
 			vg, vgMapInfo[vg].Total, vgMapInfo[vg].Allocatable, vgMapInfo[vg].Total-vgMapInfo[vg].Available, cacheNode.NodeName)

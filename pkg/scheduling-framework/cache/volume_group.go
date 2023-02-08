@@ -33,7 +33,7 @@ func NewVGState(vgName string) *VGStoragePool {
 	}
 }
 
-func NewVGStateFromVGInfo(vgInfo nodelocalstorage.VolumeGroup) *VGStoragePool {
+func NewVGStateFromVGInfo(vgInfo nodelocalstorage.VolumePool) *VGStoragePool {
 	return &VGStoragePool{Name: vgInfo.Name, Total: int64(vgInfo.Total), Allocatable: int64(vgInfo.Allocatable), Requested: 0}
 }
 
@@ -90,15 +90,15 @@ type VGHandler struct {
 func (h *VGHandler) CreateStatesByNodeLocal(nodeLocal *nodelocalstorage.NodeLocalStorage) map[string]*VGStoragePool {
 	states := map[string]*VGStoragePool{}
 	// VGs
-	vgInfoMap := make(map[string]nodelocalstorage.VolumeGroup, len(nodeLocal.Status.FilteredStorageInfo.VolumeGroups))
-	for _, vg := range nodeLocal.Status.NodeStorageInfo.VolumeGroups {
+	vgInfoMap := make(map[string]nodelocalstorage.VolumePool, len(nodeLocal.Status.FilteredStorageInfo.VolumePools))
+	for _, vg := range nodeLocal.Status.NodeStorageInfo.VolumePools {
 		vgInfoMap[vg.Name] = vg
 	}
 	// add vgs
-	for _, vgName := range nodeLocal.Status.FilteredStorageInfo.VolumeGroups {
+	for _, vgName := range nodeLocal.Status.FilteredStorageInfo.VolumePools {
 		vgInfo, ok := vgInfoMap[vgName]
 		if !ok {
-			klog.Warningf("Get VgInfo from nodeLocal failed! VGName:%s, nodeName %s", vgName, nodeLocal.Name)
+			klog.Warningf("Get VgInfo from nodeLocal failed! VolumePoolName:%s, nodeName %s", vgName, nodeLocal.Name)
 			continue
 		}
 

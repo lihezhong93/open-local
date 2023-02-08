@@ -56,10 +56,8 @@ type NodeLocalStorageSpec struct {
 	// NodeName is the kube node name
 	// +kubebuilder:validation:MaxLength=128
 	// +kubebuilder:validation:MinLength=1
-	NodeName           string             `json:"nodeName,omitempty"`
-	SpdkConfig         SpdkConfig         `json:"spdkConfig,omitempty"`
-	ListConfig         ListConfig         `json:"listConfig,omitempty"`
-	ResourceToBeInited ResourceToBeInited `json:"resourceToBeInited,omitempty"`
+	NodeName           string              `json:"nodeName,omitempty"`
+	LocalVolumeConfigs []LocalVolumeConfig `json:"localVolumeConfigs,omitempty"`
 }
 
 // NodeLocalStorageStatus defines the observed state of NodeLocalStorage
@@ -169,8 +167,9 @@ type MountPointToBeInited struct {
 type NodeStorageInfo struct {
 	// DeviceInfos is the block device on node
 	DeviceInfos []DeviceInfo `json:"deviceInfo,omitempty"`
-	// VolumeGroups is LVM vgs
-	VolumeGroups []VolumeGroup `json:"volumeGroups,omitempty"`
+	// VolumePools is LVM vgs
+	//todo: local volume pool
+	VolumePools []VolumePool `json:"volumeGroups,omitempty"`
 	// MountPoints is the list of mount points on node
 	MountPoints []MountPoint `json:"mountPoints,omitempty"`
 	// Phase is the current lifecycle phase of the node storage.
@@ -198,8 +197,9 @@ type UpdateStatusInfo struct {
 // FilteredStorageInfo is info of the storage resources of the node,
 // which is picked by Filtered Scheduler according to ListConfig
 type FilteredStorageInfo struct {
-	// VolumeGroups is LVM vgs picked by Filtered according to WhitelistVGs/BlacklistVGs
-	VolumeGroups []string `json:"volumeGroups,omitempty"`
+	// VolumePools is LVM vgs picked by Filtered according to WhitelistVGs/BlacklistVGs
+	//todo: change to volumePool
+	VolumePools []string `json:"volumeGroups,omitempty"`
 	// MountPoints is mount points picked by Filtered according to WhitelistMountPoints/BlacklistMountPoints
 	MountPoints []string `json:"mountPoints,omitempty"`
 	// Devices is block devices picked by Filtered according to WhitelistDevices/BlacklistDevices
@@ -219,17 +219,17 @@ const (
 	NodeStorageTerminated StoragePhase = "Terminated"
 )
 
-// VolumeGroup is an alias for LVM VG
-type VolumeGroup struct {
-	// Name is the VG name
+// VolumePool
+type VolumePool struct {
+	// Name is the volumePool name
 	Name string `json:"name"`
-	// PhysicalVolumes are Unix block device nodes,
-	PhysicalVolumes []string `json:"physicalVolumes"`
-	// LogicalVolumes "Virtual/logical partition" that resides in a VG
-	LogicalVolumes []LogicalVolume `json:"logicalVolumes,omitempty"`
-	// Total is the VG size
+	//LVM,SPDK
+	VolumeType string `json:"volumeType,omitempty"`
+	// LocalVolumes
+	LocalVolumes []LocalVolume `json:"localVolumes,omitempty"`
+	// Total is the volume pool size
 	Total uint64 `json:"total"`
-	// Available is the free size for VG
+	// Available is the free size for volume pool
 	Available uint64 `json:"available"`
 	// Allocatable is the free size for Filtered
 	Allocatable uint64 `json:"allocatable"`
@@ -237,17 +237,17 @@ type VolumeGroup struct {
 	Condition StorageConditionType `json:"condition,omitempty"`
 }
 
-// LogicalVolume is an alias for LVM LV
-type LogicalVolume struct {
-	// Name is the LV name
+// LocalVolume
+type LocalVolume struct {
+	// Name is the local volume name
 	Name string `json:"name"`
-	// VGName is the VG name of this LV
-	VGName string `json:"vgname"`
-	// Size is the LV size
+	// VolumePoolName
+	VolumePoolName string `json:"volumePoolName"`
+	// Size is the local volume size
 	Total uint64 `json:"total"`
-	// ReadOnly indicates whether the LV is read-only
+	// ReadOnly indicates whether the local volume is read-only
 	ReadOnly bool `json:"readOnly,omitempty"`
-	// Condition is the condition for LogicalVolume
+	// Condition is the condition for LocalVolume
 	Condition StorageConditionType `json:"condition,omitempty"`
 }
 

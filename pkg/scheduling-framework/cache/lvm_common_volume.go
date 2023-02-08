@@ -282,7 +282,7 @@ func (allocator *lvmCommonPVAllocator) prefilter(scLister storagelisters.Storage
 	var vgName string
 	vgName, err := utils.GetVGNameFromPVC(lvmPVC, scLister)
 	if err != nil {
-		error := fmt.Errorf("get VGName from PVC(%s) error: %s", utils.PVCName(lvmPVC), err.Error())
+		error := fmt.Errorf("get VolumePoolName from PVC(%s) error: %s", utils.PVCName(lvmPVC), err.Error())
 		return error
 	}
 

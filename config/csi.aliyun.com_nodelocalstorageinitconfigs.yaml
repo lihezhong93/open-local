@@ -37,55 +37,63 @@ spec:
               globalConfig:
                 description: GlobalConfig is configuration for agent to create default NodeLocalStorage
                 properties:
-                  listConfig:
+                  deviceConfig:
                     properties:
-                      devices:
-                        description: Devices defines the user specified Devices to be scheduled, only raw device specified here can be picked by scheduler
-                        properties:
-                          exclude:
-                            items:
-                              type: string
-                            maxItems: 50
-                            type: array
-                          include:
-                            items:
-                              type: string
-                            maxItems: 50
-                            type: array
-                        type: object
-                      mountPoints:
-                        description: BlacklistMountPoints defines the user specified mount points which are not allowed for scheduling
-                        properties:
-                          exclude:
-                            items:
-                              type: string
-                            maxItems: 50
-                            type: array
-                          include:
-                            items:
-                              type: string
-                            maxItems: 50
-                            type: array
-                        type: object
-                      vgs:
-                        description: VGs defines the user specified VGs to be scheduled only VGs specified here can be picked by scheduler
-                        properties:
-                          exclude:
-                            items:
-                              type: string
-                            maxItems: 50
-                            type: array
-                          include:
-                            items:
-                              type: string
-                            maxItems: 50
-                            type: array
-                        type: object
+                      exclude:
+                        items:
+                          type: string
+                        type: array
+                      include:
+                        items:
+                          type: string
+                        type: array
                     type: object
-                  resourceToBeInited:
+                  localVolumeConfigs:
+                    items:
+                      properties:
+                        localVolumeResourceToBeInited:
+                          items:
+                            properties:
+                              parameters:
+                                items:
+                                  properties:
+                                    key:
+                                      type: string
+                                    values:
+                                      items:
+                                        type: string
+                                      type: array
+                                  type: object
+                                type: array
+                            type: object
+                          type: array
+                        parameters:
+                          items:
+                            properties:
+                              key:
+                                type: string
+                              values:
+                                items:
+                                  type: string
+                                type: array
+                            type: object
+                          type: array
+                        volumeType:
+                          description: LVM, SPDK, or any others
+                          type: string
+                      type: object
+                    type: array
+                  mountPointConfig:
                     properties:
+                      exclude:
+                        items:
+                          type: string
+                        type: array
+                      include:
+                        items:
+                          type: string
+                        type: array
                       mountpoints:
-                        description: MountPoints defines the user specified mount points, which will be initialized by Filtered Agent
                         items:
                           properties:
                             device:
@@ -114,98 +122,70 @@ spec:
                           - device
                           - path
                           type: object
-                        maxItems: 50
                         type: array
-                      vgs:
-                        description: VGs defines the user specified VGs, which will be initialized by Filtered Agent
-                        items:
-                          properties:
-                            devices:
-                              description: Device can be whole disk or disk partition which will be initialized as Physical Volume
-                              items:
-                                type: string
-                              maxItems: 50
-                              type: array
-                            name:
-                              description: Name is the name of volume group
-                              maxLength: 128
-                              minLength: 1
-                              type: string
-                          required:
-                          - devices
-                          - name
-                          type: object
-                        maxItems: 50
-                        type: array
-                    type: object
-                  spdkConfig:
-                    description: SpdkConfig defines SPDK configuration
-                    properties:
-                      deviceType:
-                        description: DeviceType is the type of SPDK block devices
-                        maxLength: 8
-                        minLength: 0
-                        type: string
-                      rpcSocket:
-                        description: RpcSocket is the unix domain socket for SPDK RPC
-                        maxLength: 128
-                        minLength: 0
-                        type: string
                     type: object
                 type: object
               nodesConfig:
                 items:
                   description: NodeConfig is configuration for agent to create NodeLocalStorage of specific node
                   properties:
-                    listConfig:
+                    deviceConfig:
                       properties:
-                        devices:
-                          description: Devices defines the user specified Devices to be scheduled, only raw device specified here can be picked by scheduler
-                          properties:
-                            exclude:
-                              items:
-                                type: string
-                              maxItems: 50
-                              type: array
-                            include:
-                              items:
-                                type: string
-                              maxItems: 50
-                              type: array
-                          type: object
-                        mountPoints:
-                          description: BlacklistMountPoints defines the user specified mount points which are not allowed for scheduling
-                          properties:
-                            exclude:
-                              items:
-                                type: string
-                              maxItems: 50
-                              type: array
-                            include:
-                              items:
-                                type: string
-                              maxItems: 50
-                              type: array
-                          type: object
-                        vgs:
-                          description: VGs defines the user specified VGs to be scheduled only VGs specified here can be picked by scheduler
-                          properties:
-                            exclude:
-                              items:
-                                type: string
-                              maxItems: 50
-                              type: array
-                            include:
-                              items:
-                                type: string
-                              maxItems: 50
-                              type: array
-                          type: object
+                        exclude:
+                          items:
+                            type: string
+                          type: array
+                        include:
+                          items:
+                            type: string
+                          type: array
                       type: object
-                    resourceToBeInited:
+                    localVolumeConfigs:
+                      items:
+                        properties:
+                          localVolumeResourceToBeInited:
+                            items:
+                              properties:
+                                parameters:
+                                  items:
+                                    properties:
+                                      key:
+                                        type: string
+                                      values:
+                                        items:
+                                          type: string
+                                        type: array
+                                    type: object
+                                  type: array
+                              type: object
+                            type: array
+                          parameters:
+                            items:
+                              properties:
+                                key:
+                                  type: string
+                                values:
+                                  items:
+                                    type: string
+                                  type: array
+                              type: object
+                            type: array
+                          volumeType:
+                            description: LVM, SPDK, or any others
+                            type: string
+                        type: object
+                      type: array
+                    mountPointConfig:
                       properties:
+                        exclude:
+                          items:
+                            type: string
+                          type: array
+                        include:
+                          items:
+                            type: string
+                          type: array
                         mountpoints:
-                          description: MountPoints defines the user specified mount points, which will be initialized by Filtered Agent
                           items:
                             properties:
                               device:
@@ -234,28 +214,6 @@ spec:
                             - device
                             - path
                             type: object
-                          maxItems: 50
-                          type: array
-                        vgs:
-                          description: VGs defines the user specified VGs, which will be initialized by Filtered Agent
-                          items:
-                            properties:
-                              devices:
-                                description: Device can be whole disk or disk partition which will be initialized as Physical Volume
-                                items:
-                                  type: string
-                                maxItems: 50
-                                type: array
-                              name:
-                                description: Name is the name of volume group
-                                maxLength: 128
-                                minLength: 1
-                                type: string
-                            required:
-                            - devices
-                            - name
-                            type: object
-                          maxItems: 50
                           type: array
                       type: object
                     selector:
@@ -287,20 +245,6 @@ spec:
                             type: string
                           description: matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is "key", the operator is "In", and the values array contains only "value". The requirements are ANDed.
                           type: object
-                      type: object
-                    spdkConfig:
-                      description: SpdkConfig defines SPDK configuration
-                      properties:
-                        deviceType:
-                          description: DeviceType is the type of SPDK block devices
-                          maxLength: 8
-                          minLength: 0
-                          type: string
-                        rpcSocket:
-                          description: RpcSocket is the unix domain socket for SPDK RPC
-                          maxLength: 128
-                          minLength: 0
-                          type: string
                       type: object
                   type: object
                 type: array
